@@ -82,30 +82,30 @@
 
                 <!-- Буквы по горизонтали (A-J) -->
                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                    <TextBlock Width="30" Text="A" HorizontalAlignment="Center"/>
-                    <TextBlock Width="30" Text="B" HorizontalAlignment="Center"/>
-                    <TextBlock Width="30" Text="C" HorizontalAlignment="Center"/>
-                    <TextBlock Width="30" Text="D" HorizontalAlignment="Center"/>
-                    <TextBlock Width="30" Text="E" HorizontalAlignment="Center"/>
-                    <TextBlock Width="30" Text="F" HorizontalAlignment="Center"/>
-                    <TextBlock Width="30" Text="G" HorizontalAlignment="Center"/>
-                    <TextBlock Width="30" Text="H" HorizontalAlignment="Center"/>
-                    <TextBlock Width="30" Text="I" HorizontalAlignment="Center"/>
-                    <TextBlock Width="30" Text="J" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="A" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="B" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="C" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="D" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="E" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="F" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="G" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="H" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="I" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="J" Style="{DynamicResource H1}"/>
                 </StackPanel>
 
                 <!-- Цифры по вертикали (1-10) -->
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
-                    <TextBlock Height="30" Text="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Height="30" Text="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Height="30" Text="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Height="30" Text="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Height="30" Text="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Height="30" Text="6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Height="30" Text="7" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Height="30" Text="8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Height="30" Text="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Height="30" Text="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="1" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="2" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="3" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="4" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="5" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="6" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="7" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="8" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="9" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="10" Style="{DynamicResource H1}"/>
                 </StackPanel>
 
                 <!-- Игровое поле 10x10 (правое поле) -->
@@ -125,5 +125,28 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10">
+            <!-- Выбор ориентации корабля -->
+            <Button x:Name="ToggleOrientationButton" Content="Горизонтально" Width="120" Margin="5" Click="ToggleOrientationButton_Click" />
+            <!-- Выбор длины корабля -->
+            <ComboBox x:Name="ShipLengthComboBox" Width="120" Margin="5" SelectedIndex="0" SelectionChanged="ShipLengthComboBox_SelectionChanged">
+                <ComboBoxItem>1</ComboBoxItem>
+                <ComboBoxItem>2</ComboBoxItem>
+                <ComboBoxItem>3</ComboBoxItem>
+                <ComboBoxItem>4</ComboBoxItem>
+            </ComboBox>
+            <StackPanel Orientation="Vertical" Margin="10">
+                <TextBlock Text="Осталось кораблей:" FontWeight="Bold"/>
+                <TextBlock x:Name="Ship1Text" Text="1-палубные: 4"/>
+                <TextBlock x:Name="Ship2Text" Text="2-палубные: 3"/>
+                <TextBlock x:Name="Ship3Text" Text="3-палубные: 2"/>
+                <TextBlock x:Name="Ship4Text" Text="4-палубные: 1"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10">
+            <Button x:Name="AutoPlacementButton" Content="Авторасстановка" Width="120" Margin="5" Click="AutoPlacementButton_Click" />
+            <Button x:Name="ManualPlacementButton" Content="Ручная расстановка" Width="120" Margin="5" Click="ManualPlacementButton_Click" />
+            <Button x:Name="StartButton" Content="Старт" Width="120" Margin="5" IsEnabled="False" Click="StartButton_Click" />
+        </StackPanel>
     </Grid>
 </Window>

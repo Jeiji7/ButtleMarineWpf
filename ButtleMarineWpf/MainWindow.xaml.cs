@@ -31,12 +31,92 @@ namespace ButtleMarineWpf
         private int shipDirectionY = 0; // Направление корабля по Y (1, -1, 0)
 
         private Dictionary<Button, (int, int)> buttonCoordinates = new Dictionary<Button, (int, int)>();
+
+        private bool isManualPlacementMode = false; // Режим ручной расстановки
+        private int shipLength = 1; // Длина корабля по умолчанию
+        private bool isHorizontal = true; // Ориентация корабля по умолчанию (горизонтально)
+
+        private Dictionary<int, int> shipLimits = new Dictionary<int, int>
+        {
+            { 1, 4 }, // 4 однопалубных корабля
+            { 2, 3 }, // 3 двухпалубных корабля
+            { 3, 2 }, // 2 трёхпалубных корабля
+            { 4, 1 }  // 1 четырёхпалубный корабль
+        };
+
+        private Dictionary<int, int> placedShips = new Dictionary<int, int>
+        {
+            { 1, 0 }, // Количество размещённых однопалубных кораблей
+            { 2, 0 }, // Количество размещённых двухпалубных кораблей
+            { 3, 0 }, // Количество размещённых трёхпалубных кораблей
+            { 4, 0 }  // Количество размещённых четырёхпалубных кораблей
+        };
+
+        //public MainWindow()
+        //{
+        //    //InitializeComponent();
+        //    //InitializeGrids();
+        //    //PlaceShips(playerShips, playerButtons, true);
+        //    //PlaceShips(enemyShips, enemyButtons, false);
+        //}
+
         public MainWindow()
         {
             InitializeComponent();
             InitializeGrids();
+        }
+
+        private void ShipLengthComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Обновляем длину корабля
+            shipLength = int.Parse((ShipLengthComboBox.SelectedItem as ComboBoxItem).Content.ToString());
+        }
+
+        private void ToggleOrientationButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Меняем ориентацию корабля
+            isHorizontal = !isHorizontal;
+            ToggleOrientationButton.Content = isHorizontal ? "Горизонтально" : "Вертикально";
+        }
+
+        private void AutoPlacementButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Очищаем поля
+            ClearGrids();
+
+            // Инициализируем сетки
+            InitializeGrids();
+
+            // Расставляем корабли автоматически
             PlaceShips(playerShips, playerButtons, true);
             PlaceShips(enemyShips, enemyButtons, false);
+
+            // Активируем кнопку "Старт"
+            StartButton.IsEnabled = true;
+            isManualPlacementMode = false;
+            MoveHistoryList.Items.Clear();
+        }
+
+        private void ManualPlacementButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Очищаем поля
+            ClearGrids();
+
+            // Инициализируем сетки
+            InitializeGrids();
+
+            // Активируем режим ручной расстановки
+            isManualPlacementMode = true;
+            StartButton.IsEnabled = false; // Кнопка "Старт" будет активирована после завершения расстановки
+            PlaceShips(enemyShips, enemyButtons, false);
+            MoveHistoryList.Items.Clear();
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Начинаем игру
+            isPlayerTurn = true;
+            MessageBox.Show("Игра началась!");
         }
 
         private void InitializeGrids()
@@ -45,16 +125,147 @@ namespace ButtleMarineWpf
             {
                 for (int j = 0; j < GridSize; j++)
                 {
+                    // Создаём кнопку для игрока
                     playerButtons[i, j] = new Button();
+                    playerButtons[i, j].Click += PlayerButton_Click; // Добавляем обработчик клика
+                    Grid.SetColumn(playerButtons[i, j], i); // Устанавливаем столбец
+                    Grid.SetRow(playerButtons[i, j], j);    // Устанавливаем строку
                     PlayerGrid.Children.Add(playerButtons[i, j]);
 
+                    // Создаём кнопку для противника
                     enemyButtons[i, j] = new Button();
                     enemyButtons[i, j].Click += EnemyButton_Click;
                     buttonCoordinates[enemyButtons[i, j]] = (i, j);
+                    Grid.SetColumn(enemyButtons[i, j], i); // Устанавливаем столбец
+                    Grid.SetRow(enemyButtons[i, j], j);    // Устанавливаем строку
                     EnemyGrid.Children.Add(enemyButtons[i, j]);
                 }
             }
         }
+
+        private void PlayerGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!isManualPlacementMode) return;
+
+            // Получаем координаты клика
+            Point position = e.GetPosition(PlayerGrid);
+            int x = (int)(position.X / (PlayerGrid.ActualWidth / GridSize));
+            int y = (int)(position.Y / (PlayerGrid.ActualHeight / GridSize));
+
+            // Размещаем корабль
+            if (CanPlaceShip(x, y, shipLength, isHorizontal, playerButtons))
+            {
+                PlaceShip(x, y, shipLength, isHorizontal, playerButtons, playerShips);
+            }
+
+            // Активируем кнопку "Старт" после завершения расстановки
+            StartButton.IsEnabled = true;
+        }
+
+        private void PlaceShip(int x, int y, int length, bool horizontal, Button[,] buttons, List<Ship> ships)
+        {
+            ships.Add(new Ship(x, y, length, horizontal));
+            for (int i = 0; i < length; i++)
+            {
+                int xi = x + (horizontal ? i : 0);
+                int yi = y + (horizontal ? 0 : i);
+                buttons[xi, yi].Background = Brushes.Blue; // Закрашиваем клетку корабля
+                buttons[xi, yi].Tag = ships.Last(); // Связываем клетку с кораблём
+            }
+        }
+
+        private bool CanPlaceShip(int x, int y, int length, bool horizontal, Button[,] buttons)
+        {
+            for (int i = 0; i < length; i++)
+            {
+                int xi = x + (horizontal ? i : 0);
+                int yi = y + (horizontal ? 0 : i);
+
+                if (xi >= GridSize || yi >= GridSize || buttons[xi, yi].Tag != null)
+                {
+                    return false;
+                }
+
+                // Проверяем соседние клетки
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    for (int dy = -1; dy <= 1; dy++)
+                    {
+                        int xj = xi + dx;
+                        int yj = yi + dy;
+                        if (xj >= 0 && xj < GridSize && yj >= 0 && yj < GridSize && buttons[xj, yj].Tag != null)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        private void ClearGrids()
+        {
+            PlayerGrid.Children.Clear();
+            EnemyGrid.Children.Clear();
+            playerShips.Clear();
+            enemyShips.Clear();
+            playerButtons = new Button[GridSize, GridSize];
+            enemyButtons = new Button[GridSize, GridSize];
+
+            // Сбрасываем счётчики размещённых кораблей
+            placedShips = new Dictionary<int, int>
+            {
+                { 1, 0 },
+                { 2, 0 },
+                { 3, 0 },
+                { 4, 0 }
+            };
+        }
+
+        private void PlayerButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!isManualPlacementMode) return;
+
+            Button button = sender as Button;
+            if (button == null) return;
+
+            int x = Grid.GetColumn(button);
+            int y = Grid.GetRow(button);
+
+            if (placedShips[shipLength] >= shipLimits[shipLength])
+            {
+                MessageBox.Show($"Достигнут лимит кораблей длиной {shipLength}!");
+                return;
+            }
+
+            if (CanPlaceShip(x, y, shipLength, isHorizontal, playerButtons))
+            {
+                PlaceShip(x, y, shipLength, isHorizontal, playerButtons, playerShips);
+                placedShips[shipLength]++; // Увеличиваем количество размещённых кораблей
+                UpdateShipCounts(); // Обновляем отображение количества кораблей
+            }
+
+            // Активируем кнопку "Старт", если все корабли размещены
+            StartButton.IsEnabled = AreAllShipsPlaced();
+        }
+
+        private bool AreAllShipsPlaced()
+        {
+            foreach (var key in shipLimits.Keys)
+            {
+                if (placedShips[key] < shipLimits[key])
+                    return false;
+            }
+            return true;
+        }
+
+        private void UpdateShipCounts()
+        {
+            Ship1Text.Text = $"1-палубные: {shipLimits[1] - placedShips[1]}";
+            Ship2Text.Text = $"2-палубные: {shipLimits[2] - placedShips[2]}";
+            Ship3Text.Text = $"3-палубные: {shipLimits[3] - placedShips[3]}";
+            Ship4Text.Text = $"4-палубные: {shipLimits[4] - placedShips[4]}";
+        }
+
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
@@ -101,36 +312,6 @@ namespace ButtleMarineWpf
                 }
             }
         }
-        private bool CanPlaceShip(int x, int y, int length, bool horizontal, Button[,] buttons)
-        {
-            for (int i = 0; i < length; i++)
-            {
-                int xi = x + (horizontal ? i : 0);
-                int yi = y + (horizontal ? 0 : i);
-                if (xi >= GridSize || yi >= GridSize || buttons[xi, yi].Tag != null)
-                {
-                    return false;
-                }
-
-
-
-            for (int dx = -1; dx <= 1; dx++)
-                {
-                    for (int dy = -1; dy <= 1; dy++)
-                    {
-                        int xj = xi + dx;
-                        int yj = yi + dy;
-                        if (xj >= 0 && xj < GridSize && yj >= 0 && yj < GridSize && buttons[xj, yj].Tag != null)
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-            }
-            return true;
-        }
-
         private void EnemyButton_Click(object sender, RoutedEventArgs e)
         {
             if (!isPlayerTurn) return; // Если ход не игрока, ничего не делаем
@@ -375,15 +556,30 @@ namespace ButtleMarineWpf
 
         private void CheckGameOver()
         {
-            if (playerShips.All(ship => ship.Hits == ship.Length))
-            {
-                MessageBox.Show("Противник победил!");
-            }
-            else if (enemyShips.All(ship => ship.Hits == ship.Length))
+            bool allPlayerShipsSunk = playerShips.All(ship => ship.Hits == ship.Length);
+            bool allEnemyShipsSunk = enemyShips.All(ship => ship.Hits == ship.Length);
+
+            if (allEnemyShipsSunk)
             {
                 MessageBox.Show("Вы победили!");
+                ResetGame();
             }
-            
+            else if (allPlayerShipsSunk)
+            {
+                MessageBox.Show("Противник победил!");
+                ResetGame();
+            }
+        }
+        private void ResetGame()
+        {
+            // Очищаем поля и перезапускаем игру
+            ClearGrids();
+            InitializeGrids();
+            UpdateShipCounts();
+            PlaceShips(playerShips, playerButtons, true);
+            PlaceShips(enemyShips, enemyButtons, false);
+            isPlayerTurn = true; // Сбрасываем ход
+            MoveHistoryList.Items.Clear();
         }
         private void AddMoveToHistory(string playerName, int x, int y)
         {
@@ -400,6 +596,8 @@ namespace ButtleMarineWpf
             // Прокручиваем ListBox к последнему элементу
             MoveHistoryList.ScrollIntoView(MoveHistoryList.Items[MoveHistoryList.Items.Count - 1]);
         }
+
+
     }
     //BB
     public class Ship
