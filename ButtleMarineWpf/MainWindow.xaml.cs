@@ -401,7 +401,7 @@ namespace ButtleMarineWpf
             MoveHistoryList.ScrollIntoView(MoveHistoryList.Items[MoveHistoryList.Items.Count - 1]);
         }
     }
-
+    //BB
     public class Ship
     {
         public int X { get; }
