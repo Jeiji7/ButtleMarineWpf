@@ -1,0 +1,129 @@
+﻿<Window x:Class="ButtleMarineWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ButtleMarineWpf"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="650" Width="800">
+    <Grid>
+        <!-- Основная сетка для двух игровых полей -->
+        <Grid x:Name="MainGrid" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 150">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <!-- Левое поле (игрок) -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- Правое поле (противник) -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Левое поле (игрок) -->
+            <Grid Grid.Column="0" Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Строка для букв -->
+                    <RowDefinition Height="*"/>
+                    <!-- Основные строки для игрового поля -->
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Столбец для цифр -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Основные столбцы для игрового поля -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Буквы по горизонтали (A-J) -->
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Width="30" Text="A" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="B" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="C" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="D" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="E" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="F" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="G" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="H" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="I" Style="{DynamicResource H1}"/>
+                    <TextBlock Width="30" Text="J" Style="{DynamicResource H1}"/>
+                </StackPanel>
+
+                <!-- Цифры по вертикали (1-10) -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
+                    <TextBlock Height="30" Text="1" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="2" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="3" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="4" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="5" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="6" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="7" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="8" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="9" Style="{DynamicResource H1}"/>
+                    <TextBlock Height="30" Text="10" Style="{DynamicResource H1}"/>
+                </StackPanel>
+
+                <!-- Игровое поле 10x10 (левое поле) -->
+                <UniformGrid x:Name="PlayerGrid" Grid.Row="1" Grid.Column="1" Rows="10" Columns="10" Background="LightGray">
+                    <!-- Кнопки будут добавлены в коде -->
+                </UniformGrid>
+            </Grid>
+
+            <!-- Правое поле (противник) -->
+            <Grid Grid.Column="1" Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Строка для букв -->
+                    <RowDefinition Height="*"/>
+                    <!-- Основные строки для игрового поля -->
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Столбец для цифр -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Основные столбцы для игрового поля -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Буквы по горизонтали (A-J) -->
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Width="30" Text="A" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="B" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="C" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="D" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="E" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="F" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="G" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="H" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="I" HorizontalAlignment="Center"/>
+                    <TextBlock Width="30" Text="J" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Цифры по вертикали (1-10) -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
+                    <TextBlock Height="30" Text="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="7" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Height="30" Text="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Игровое поле 10x10 (правое поле) -->
+                <UniformGrid x:Name="EnemyGrid" Grid.Row="1" Grid.Column="1" Rows="10" Columns="10" Background="LightGray">
+                    <!-- Кнопки будут добавлены в коде -->
+                </UniformGrid>
+            </Grid>
+        </Grid>
+        <Button Width="50" Height="40" HorizontalAlignment="Left" VerticalAlignment="Top" Click="RefreshButton_Click">
+            <TextBlock TextWrapping="Wrap" TextAlignment="Center">Новая игра</TextBlock>
+        </Button>
+        <!-- ListBox для отображения истории ходов -->
+        <ListBox x:Name="MoveHistoryList" Width="200" Height="200" Margin="10" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Width="100"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>
